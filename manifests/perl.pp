@@ -27,23 +27,24 @@ class perlbrew::perl (
   
   include perlbrew
   
-  assembled_curl_http_proxy_string = ''
-  #build -x <[protocol://][user:password@]proxyhost[:port]>
+  http_proxy_string = ''
+  curl_http_proxy_string = ''
+  #build <[protocol://][user:password@]proxyhost[:port]>, prepends -x for curl too
   if($perlbrew::http_proxy&&$perlbrew::http_proxy_url) {
     #TODO: ensure url is valid url?
     #append username and password to proxy string
-    assembled_curl_http_proxy_string = '-x '
     if($perlbrew::http_proxy_username) {
       if($perlbrew::http_proxy_password) {
-        assembled_curl_http_proxy_string += $perlbrew::http_proxy_username +':'+$perlbrew::http_proxy_password + '@'
+        http_proxy_string += $perlbrew::http_proxy_username +':'+$perlbrew::http_proxy_password + '@'
       }
-      else { assembled_curl_http_proxy_string += $perlbrew::http_proxy_username + '@' }
+      else { http_proxy_string += $perlbrew::http_proxy_username + '@' }
     }
-    assembled_curl_http_proxy_string += $perlbrew::http_proxy_url
-    #TODO: curl -x http://proxy_server:proxy_port --proxy-user username:password -L http://url might be better supported
-    if($perlbrew::http_proxy_port) { assembled_curl_http_proxy_string += ':'+$perlbrew::http_proxy_port }
+    http_proxy_string += $perlbrew::http_proxy_url
+    #TODO: Might be better supported-> curl -x http://proxy_server:proxy_port --proxy-user username:password -L http://url 
+    if($perlbrew::http_proxy_port) { http_proxy_string += ':'+$perlbrew::http_proxy_port }
+    curl_http_proxy_string = ' -x '+http_proxy_string 
   }
-
+  
   if (is_array($compile_options)) {
     $compile_opts = join($compile_options, ' ')
   }
@@ -53,7 +54,7 @@ class perlbrew::perl (
       "PERLBREW_ROOT=${perlbrew::perlbrew_root}",
       'PERLBREW_HOME=/tmp/.perlbrew',
       'HOME=/opt',
-      'http_proxy='+$perlbrew::http_proxy_url, #TODO: should be conditional on it's inclusion.
+      'http_proxy='+http_proxy_string, #TODO: should be conditional on it's inclusion.
     ],
     command     => "source ${perlbrew::perlbrew_root}/etc/bashrc; ${perlbrew::perlbrew_root}/bin/perlbrew install perl-${version} ${compile_opts}",
     creates     => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl",
@@ -70,14 +71,14 @@ class perlbrew::perl (
   }
 
   exec{'install_cpan':
-    command => "/usr/bin/curl "+assembled_curl_http_proxy_string+" -L http://cpanmin.us | ${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl - App::cpanminus",
+    command => "/usr/bin/curl "+curl_http_proxy_string+" -L http://cpanmin.us | ${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl - App::cpanminus",
     creates => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm",
     require => Exec["switch_to_perl_${version}"],
   } ->
   exec {'install_Bundle::LWP': #TODO: Turn off lwp and curl if proxy is specified. should be fine for now, cuz it'll just fail and try wget last.
     environment => [
       "PERL_CPANM_OPT=--no-lwp --no-curl",
-      'http_proxy='+$perlbrew::http_proxy_url, #TODO: should be conditional on it's inclusion.
+      'http_proxy='+http_proxy_string, #TODO: should be conditional on it's inclusion.
     ],
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Bundle::LWP",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MBundle::LWP -e 1",
@@ -86,7 +87,7 @@ class perlbrew::perl (
   exec {'install_Crypt::SSLeay':
     environment => [
       "PERL_CPANM_OPT=--no-lwp --no-curl",
-      'http_proxy='+$perlbrew::http_proxy_url, #TODO: should be conditional on it's inclusion.
+      'http_proxy='+http_proxy_string, #TODO: should be conditional on it's inclusion.
     ],
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Crypt::SSLeay",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MCrypt::SSLeay -e 1",
