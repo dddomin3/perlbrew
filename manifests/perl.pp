@@ -75,11 +75,19 @@ class perlbrew::perl (
     require => Exec["switch_to_perl_${version}"],
   } ->
   exec {'install_Bundle::LWP': #TODO: Turn off lwp and curl if proxy is specified. should be fine for now, cuz it'll just fail and try wget last.
+    environment => [
+      "PERL_CPANM_OPT=--no-lwp --no-curl",
+      'http_proxy='+$perlbrew::http_proxy_url, #TODO: should be conditional on it's inclusion.
+    ],
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Bundle::LWP",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MBundle::LWP -e 1",
     timeout => 0,
   } ->
   exec {'install_Crypt::SSLeay':
+    environment => [
+      "PERL_CPANM_OPT=--no-lwp --no-curl",
+      'http_proxy='+$perlbrew::http_proxy_url, #TODO: should be conditional on it's inclusion.
+    ],
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Crypt::SSLeay",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MCrypt::SSLeay -e 1",
     timeout => 0,
