@@ -14,7 +14,7 @@ class perlbrew (
   $perlbrew_init_file = $perlbrew::params::perlbrew_init_file,
   $http_proxy         = $perlbrew::params::http_proxy,
   
-  if($perlbrew::http_proxy) {
+  if $http_proxy {
     $curl_http_proxy_string = "-x ${perlbrew::http_proxy}"
   }
   
