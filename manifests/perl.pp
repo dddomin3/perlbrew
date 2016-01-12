@@ -30,7 +30,11 @@ class perlbrew::perl (
   if (is_array($compile_options)) {
     $compile_opts = join($compile_options, ' ')
   }
-
+  
+  package { 'openssl-devel':
+    ensure => 'installed',
+  }
+  
   exec {"install_perl_${version}":
     environment => [
       "PERLBREW_ROOT=${perlbrew::perlbrew_root}",
@@ -81,6 +85,7 @@ class perlbrew::perl (
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Crypt::SSLeay",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MCrypt::SSLeay -e 1",
     timeout => 0,
+    require => Package['openssl-devel'],
   }
 
   Concat::Fragment {
