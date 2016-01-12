@@ -27,11 +27,6 @@ class perlbrew::perl (
   
   include perlbrew
   
-  $curl_http_proxy_string = ''
-  if($perlbrew::http_proxy) {
-    $curl_http_proxy_string = "-x ${perlbrew::http_proxy}"
-  }
-  
   if (is_array($compile_options)) {
     $compile_opts = join($compile_options, ' ')
   }

@@ -12,9 +12,12 @@ class perlbrew (
 
   $perlbrew_root      = $perlbrew::params::perlbrew_root,
   $perlbrew_init_file = $perlbrew::params::perlbrew_init_file,
-  
   $http_proxy         = $perlbrew::params::http_proxy,
-
+  
+  if($perlbrew::http_proxy) {
+    $curl_http_proxy_string = "-x ${perlbrew::http_proxy}"
+  }
+  
 ) inherits perlbrew::params {
 
   # param validation

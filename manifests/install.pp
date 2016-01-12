@@ -17,14 +17,9 @@ class perlbrew::install {
     mode   => '0755',
   }
   
-  $curl_http_proxy_string = ''
-  if($perlbrew::http_proxy) {
-    $curl_http_proxy_string = "-x ${perlbrew::http_proxy}"
-  }
-  
   exec {'install_perlbrew':
     environment => 'PERLBREW_ROOT=/opt/perl5',
-    command     => "/usr/bin/curl ${curl_http_proxy_string} -L http://install.perlbrew.pl | /bin/bash",
+    command     => "/usr/bin/curl ${perlbrew::curl_http_proxy_string} -L http://install.perlbrew.pl | /bin/bash",
     creates     => "${perlbrew::perlbrew_root}/bin/perlbrew",
     require     => Package['curl'],
   }
