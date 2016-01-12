@@ -21,6 +21,7 @@ class perlbrew::install {
     environment => [
       'PERLBREW_ROOT=/opt/perl5',
       $perlbrew::http_proxy_envstring,
+      $perlbrew::https_proxy_envstring,
     ],
     command     => "/usr/bin/curl -L http://install.perlbrew.pl | /bin/bash",
     creates     => "${perlbrew::perlbrew_root}/bin/perlbrew",
