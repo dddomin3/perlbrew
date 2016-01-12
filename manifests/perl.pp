@@ -30,7 +30,7 @@ class perlbrew::perl (
   $http_proxy_string = ''
   $curl_http_proxy_string = ''
   #build <[protocol://][user:password@]proxyhost[:port]>, prepends -x for curl too
-  if($perlbrew::http_proxy && $perlbrew::http_proxy_url) {
+  if($perlbrew::http_proxy and $perlbrew::http_proxy_url) {
     #TODO: ensure url is valid url?
     #append username and password to proxy string
     if($perlbrew::http_proxy_username) {
