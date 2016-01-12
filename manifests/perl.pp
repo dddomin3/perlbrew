@@ -54,7 +54,7 @@ class perlbrew::perl (
       "PERLBREW_ROOT=${perlbrew::perlbrew_root}",
       'PERLBREW_HOME=/tmp/.perlbrew',
       'HOME=/opt',
-      'http_proxy=' + $http_proxy_string, #TODO: should be conditional on it's inclusion.
+      "http_proxy=${http_proxy_string}", #TODO: should be conditional on it's inclusion.
     ],
     command     => "source ${perlbrew::perlbrew_root}/etc/bashrc; ${perlbrew::perlbrew_root}/bin/perlbrew install perl-${version} ${compile_opts}",
     creates     => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl",
