@@ -17,22 +17,9 @@ class perlbrew::install {
     mode   => '0755',
   }
   
-  $http_proxy_string = ''
   $curl_http_proxy_string = ''
-  #build <[protocol://][user:password@]proxyhost[:port]>, prepends -x for curl too
-  if($perlbrew::http_proxy and $perlbrew::http_proxy_url) {
-    #TODO: ensure url is valid url?
-    #append username and password to proxy string
-    if($perlbrew::http_proxy_username) {
-      if($perlbrew::http_proxy_password) {
-        $http_proxy_string += "${perlbrew::http_proxy_username}:${perlbrew::http_proxy_password}@"
-      }
-      else { $http_proxy_string += $perlbrew::http_proxy_username + '@' }
-    }
-    $http_proxy_string += $perlbrew::http_proxy_url
-    #TODO: curl -x http://proxy_server:proxy_port --proxy-user username:password -L http://url might be better supported
-    if($perlbrew::http_proxy_port) { $http_proxy_string += ':' + $perlbrew::http_proxy_port }
-    $curl_http_proxy_string = ' -x '+ $http_proxy_string 
+  if($perlbrew::http_proxy) {
+    $curl_http_proxy_string = "-x ${perlbrew::http_proxy}"
   }
   
   exec {'install_perlbrew':

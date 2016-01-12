@@ -27,22 +27,9 @@ class perlbrew::perl (
   
   include perlbrew
   
-  $http_proxy_string = ''
   $curl_http_proxy_string = ''
-  #build <[protocol://][user:password@]proxyhost[:port]>, prepends -x for curl too
-  if($perlbrew::http_proxy and $perlbrew::http_proxy_url) {
-    #TODO: ensure url is valid url?
-    #append username and password to proxy string
-    if($perlbrew::http_proxy_username) {
-      if($perlbrew::http_proxy_password) {
-        $http_proxy_string += "${perlbrew::http_proxy_username}:${perlbrew::http_proxy_password}@"
-      }
-      else { $http_proxy_string += $perlbrew::http_proxy_username + '@' }
-    }
-    $http_proxy_string += $perlbrew::http_proxy_url
-    #TODO: Might be better supported-> curl -x http://proxy_server:proxy_port --proxy-user username:password -L http://url 
-    if($perlbrew::http_proxy_port) { $http_proxy_string += ':' + $perlbrew::http_proxy_port }
-    $curl_http_proxy_string = ' -x ' + $http_proxy_string 
+  if($perlbrew::http_proxy) {
+    $curl_http_proxy_string = "-x ${perlbrew::http_proxy}"
   }
   
   if (is_array($compile_options)) {
@@ -54,7 +41,7 @@ class perlbrew::perl (
       "PERLBREW_ROOT=${perlbrew::perlbrew_root}",
       'PERLBREW_HOME=/tmp/.perlbrew',
       'HOME=/opt',
-      "http_proxy=${http_proxy_string}", #TODO: should be conditional on it's inclusion.
+      "http_proxy=${perlbrew::http_proxy}", #TODO: should be conditional on it's inclusion.
     ],
     command     => "source ${perlbrew::perlbrew_root}/etc/bashrc; ${perlbrew::perlbrew_root}/bin/perlbrew install perl-${version} ${compile_opts}",
     creates     => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl",
@@ -78,7 +65,7 @@ class perlbrew::perl (
   exec {'install_Bundle::LWP': #TODO: Turn off lwp and curl if proxy is specified. should be fine for now, cuz it'll just fail and try wget last.
     environment => [
       "PERL_CPANM_OPT=--no-lwp --no-curl",
-      "http_proxy=${http_proxy_string}", #TODO: should be conditional on it's inclusion.
+      "http_proxy=${perlbrew::http_proxy}", #TODO: should be conditional on it's inclusion.
     ],
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Bundle::LWP",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MBundle::LWP -e 1",
@@ -87,7 +74,7 @@ class perlbrew::perl (
   exec {'install_Crypt::SSLeay':
     environment => [
       "PERL_CPANM_OPT=--no-lwp --no-curl",
-      "http_proxy=${http_proxy_string}", #TODO: should be conditional on it's inclusion.
+      "http_proxy=${perlbrew::http_proxy}", #TODO: should be conditional on it's inclusion.
     ],
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Crypt::SSLeay",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MCrypt::SSLeay -e 1",
