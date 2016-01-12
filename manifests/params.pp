@@ -15,6 +15,12 @@ class perlbrew::params {
     'RedHat': {
       $perlbrew_root      = '/opt/perl5'
       $perlbrew_init_file = '/etc/profile.d/perlbrew.sh'
+      
+      $http_proxy          = false
+      $http_proxy_url      = ''
+      $http_proxy_username = ''
+      $http_proxy_password = ''
+      $http_proxy_port     = ''
     }
     default: {
       fail("${::operatingsystem} not supported")

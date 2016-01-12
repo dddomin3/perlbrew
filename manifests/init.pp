@@ -13,14 +13,11 @@ class perlbrew (
   $perlbrew_root      = $perlbrew::params::perlbrew_root,
   $perlbrew_init_file = $perlbrew::params::perlbrew_init_file,
   
-  $http_proxy = $perlbrew::params::http_proxy,
-  $http_proxy_url = $perlbrew::params::http_proxy_url,
+  $http_proxy          = $perlbrew::params::http_proxy,
+  $http_proxy_url      = $perlbrew::params::http_proxy_url,
   $http_proxy_username = $perlbrew::params::http_proxy_username,
   $http_proxy_password = $perlbrew::params::http_proxy_password,
-  $http_proxy_port = $perlbrew::params::http_proxy_port,
-  
-  $https_proxy = $perlbrew::params::http_proxy,
-  $https_proxy_url = $perlbrew::params::http_proxy_url,
+  $http_proxy_port     = $perlbrew::params::http_proxy_port,
 
 
 ) inherits perlbrew::params {
