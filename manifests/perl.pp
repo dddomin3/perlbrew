@@ -55,7 +55,7 @@ class perlbrew::perl (
   exec{'install_cpan':
     environment => [
       $perlbrew::http_proxy_envstring,
-    ]
+    ],
     command => "/usr/bin/curl -L http://cpanmin.us | ${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl - App::cpanminus",
     creates => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm",
     require => Exec["switch_to_perl_${version}"],
