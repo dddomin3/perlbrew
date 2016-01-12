@@ -20,7 +20,7 @@ class perlbrew::install {
   exec {'install_perlbrew':
     environment => [
       'PERLBREW_ROOT=/opt/perl5',
-      ${perlbrew::http_proxy_envstring},
+      $perlbrew::http_proxy_envstring,
     ]
     command     => "/usr/bin/curl -L http://install.perlbrew.pl | /bin/bash",
     creates     => "${perlbrew::perlbrew_root}/bin/perlbrew",

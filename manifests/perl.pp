@@ -36,7 +36,7 @@ class perlbrew::perl (
       "PERLBREW_ROOT=${perlbrew::perlbrew_root}",
       'PERLBREW_HOME=/tmp/.perlbrew',
       'HOME=/opt',
-      ${perlbrew::http_proxy_envstring},
+      $perlbrew::http_proxy_envstring,
     ],
     command     => "source ${perlbrew::perlbrew_root}/etc/bashrc; ${perlbrew::perlbrew_root}/bin/perlbrew install perl-${version} ${compile_opts}",
     creates     => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl",
@@ -54,7 +54,7 @@ class perlbrew::perl (
 
   exec{'install_cpan':
     environment => [
-      ${perlbrew::http_proxy_envstring},
+      $perlbrew::http_proxy_envstring,
     ]
     command => "/usr/bin/curl -L http://cpanmin.us | ${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl - App::cpanminus",
     creates => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm",
@@ -63,7 +63,7 @@ class perlbrew::perl (
   exec {'install_Bundle::LWP': #TODO: Turn off lwp and curl if proxy is specified. should be fine for now, cuz it'll just fail and try wget last.
     environment => [
       "PERL_CPANM_OPT=--no-lwp --no-curl",
-      ${perlbrew::http_proxy_envstring},
+      $perlbrew::http_proxy_envstring,
     ],
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Bundle::LWP",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MBundle::LWP -e 1",
@@ -72,7 +72,7 @@ class perlbrew::perl (
   exec {'install_Crypt::SSLeay':
     environment => [
       "PERL_CPANM_OPT=--no-lwp --no-curl",
-      ${perlbrew::http_proxy_envstring},
+      $perlbrew::http_proxy_envstring,
     ],
     command => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/cpanm --install Crypt::SSLeay",
     unless  => "${perlbrew::perlbrew_root}/perls/perl-${version}/bin/perl -MCrypt::SSLeay -e 1",
