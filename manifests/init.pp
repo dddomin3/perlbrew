@@ -19,7 +19,7 @@ class perlbrew (
   # param validation
   
   if $http_proxy {
-    $curl_http_proxy_string = "-x ${perlbrew::http_proxy}"
+    $http_proxy_envstring = "http_proxy=${perlbrew::http_proxy}"
   }
   
   class { 'perlbrew::install': } ->
